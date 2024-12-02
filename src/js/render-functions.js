@@ -21,6 +21,7 @@ export default function renderIMG(hits) {
             `;
         })
         .join("");
+    
     gallery.innerHTML = imgMarkup; 
     const lightbox = new SimpleLightbox('.gallery a');
     lightbox.refresh();

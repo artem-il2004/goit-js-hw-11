@@ -7,10 +7,11 @@ function handleSubmit(event) {
     event.preventDefault();
     const formValue = event.target.elements['input-field'].value.trim();
     const loadindMessage = document.querySelector(".loader-container");
-   
+    const gallery = document.querySelector(".gallery");
+
     if (!formValue) {
         iziToast.show({
-            message: "Sorry, you 4goat necessery information"
+            message: "Sorry, you forgot necessery information"
         });
         return;
         
@@ -22,7 +23,12 @@ function handleSubmit(event) {
                 loadindMessage.style.display = "none";
                 return renderIMG(hits);
             })
-            .catch(error => console.error(error))
+            .catch(error => {
+                gallery.innerHTML = "";
+                iziToast.show({
+            message: "Something went wrong"
+        });
+            })
             .finally(() => {
                 event.target.reset();
             });        
