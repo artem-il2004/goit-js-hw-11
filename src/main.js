@@ -20,12 +20,13 @@ function handleLoadMore(event) {
         .then(responseData => {
             imgLeft -= responseData.hits.length;
             if (imgLeft <= 0) {
-                loadBTN.style.display = 'none';
-                 iziToast.show({
+                iziToast.show({
                     message: "We're sorry, but you've reached the end of search results."
-                 })
-        }
+                });
+                loadBTN.style.display = 'none';
+            }
             loadingMessage.style.display = "none";
+         
             return responseData.hits;
         })
         .then(hits => { 
@@ -56,12 +57,13 @@ function handleSubmit(event) {
 
     page = 1;
     
-    
     if (!formValue) {
         iziToast.show({
             message: "Sorry, you forgot necessery information"
         });
-
+  
+        
+        loadBTN.style.display = 'none';
         return;
     }
     else { 
@@ -73,7 +75,14 @@ function handleSubmit(event) {
                 imgLeft = responseData.totalHits; 
                 imgLeft -= responseData.hits.length;
                 renderIMG(responseData.hits);
-
+                if (responseData.totalHits === 0) {
+                    loadBTN.style.display = 'none';
+                }
+                else { 
+                    loadBTN.style.pointerEvents = 'all';
+                    loadBTN.style.display = 'flex';
+                }
+                
             })
             .catch(error => {
                 gallery.innerHTML = "";
@@ -83,7 +92,8 @@ function handleSubmit(event) {
             })
             .finally(() => {
                 event.target.reset();
-            });        
+            });  
+        
     }
 };
 
