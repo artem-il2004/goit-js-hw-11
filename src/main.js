@@ -13,89 +13,88 @@ let imgLeft = 0;
 
 function handleLoadMore(event) {
     event.preventDefault();
+
     loadingMessage.style.display = "flex";
+
     page += 1;
-    
+
     httpRequest(formValue, page, perPage)
         .then(responseData => {
             imgLeft -= responseData.hits.length;
+
             if (imgLeft <= 0) {
                 iziToast.show({
                     message: "We're sorry, but you've reached the end of search results."
                 });
-                loadBTN.style.display = 'none';
+                loadBTN.style.display = 'none'; 
             }
-            loadingMessage.style.display = "none";
          
             return responseData.hits;
         })
         .then(hits => { 
-            return renderIMG(hits);
-          
+            renderIMG(hits);
         })
         .then(() => { 
             window.scrollBy({
-                    top: 209.19 * 2,  
-                    behavior: "smooth",
-                });
+                top: 209.19 * 2,  
+                behavior: "smooth",
+            });
         })
-        
         .catch(error => {
             iziToast.show({
                 message: "Something went wrong"
             });
         })
-        
+        .finally(() => {
+            loadingMessage.style.display = "none";
+        });
 }
 
 
 function handleSubmit(event) { 
     event.preventDefault();
     formValue = event.target.elements['input-field'].value.trim();
-    const loadindMessage = document.querySelector(".loader-container");
+    const loadingMessage = document.querySelector(".loader-container");
     const gallery = document.querySelector(".gallery");
 
     page = 1;
-    
+
     if (!formValue) {
         iziToast.show({
-            message: "Sorry, you forgot necessery information"
+            message: "Sorry, you forgot necessary information",
         });
-  
-        
+
         loadBTN.style.display = 'none';
         return;
-    }
-    else { 
-         loadindMessage.style.display = "flex";
+    } else { 
+        loadingMessage.style.display = "flex";
         httpRequest(formValue, page, perPage)
             .then(responseData => {
-                loadindMessage.style.display = "none";
+                loadingMessage.style.display = "none";
                 gallery.innerHTML = "";
                 imgLeft = responseData.totalHits; 
-                imgLeft -= responseData.hits.length;
+                imgLeft -= responseData.hits.length; 
+                
                 renderIMG(responseData.hits);
-                if (responseData.totalHits === 0) {
+
+                if (responseData.totalHits <= perPage || responseData.hits.length === 0) {
                     loadBTN.style.display = 'none';
-                }
-                else { 
+                } else { 
                     loadBTN.style.pointerEvents = 'all';
                     loadBTN.style.display = 'flex';
                 }
-                
             })
             .catch(error => {
                 gallery.innerHTML = "";
                 iziToast.show({
-            message: "Something went wrong"
-        });
+                    message: "Something went wrong",
+                });
             })
             .finally(() => {
                 event.target.reset();
             });  
-        
     }
-};
+}
 
 
 
